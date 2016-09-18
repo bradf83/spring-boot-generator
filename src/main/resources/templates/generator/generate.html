@@ -19,80 +19,80 @@
         Spring Boot Generator
     </div>
 </div>
-<div class="ui grid">
-    <div class="two column row">
-        <div class="column">
-            <form class="ui form" th:action="@{/}" method="post" th:object="${generatorForm}" >
-                <button type="submit" tabindex="-1" style="display:none;"></button> <!-- This is a hidden button hack, to ensure that the enter triggers submit and not add model field -->
-                <div class="field">
-                    <label>Package</label>
-                    <input type="text" th:field="*{packageName}" placeholder="Package (com.example)" autofocus="autofocus" />
-                </div>
-                <div class="field">
-                    <label>Model Name</label>
-                    <input type="text" th:field="*{modelName}" placeholder="Model Name (User)" />
-                </div>
-                <div class="field">
-                    <label>Table Name</label>
-                    <input type="text" th:field="*{tableName}" placeholder="Table Name (user)" />
-                </div>
-                <div class="inline fields">
-                    <label for="extensionClass">Extension Class:</label>
+<!--<div class="ui grid" style="padding-top: 45px;margin-left: 15px;margin-right: 15px;">-->
+<div class="ui grid padded">
+        <div class="two column row">
+            <div class="column">
+                <form class="ui form" th:action="@{/}" method="post" th:object="${generatorForm}" >
+                    <button type="submit" tabindex="-1" style="display:none;"></button> <!-- This is a hidden button hack, to ensure that the enter triggers submit and not add model field -->
                     <div class="field">
-                        <div class="ui radio checkbox">
-                            <input type="radio" name="extensionClass" checked="" value="AbstractPersistable" tabindex="0" class="hidden" />
-                            <label>AbstractPersistable</label>
-                        </div>
+                        <label>Package</label>
+                        <input type="text" th:field="*{packageName}" placeholder="Package (com.example)" autofocus="autofocus" />
                     </div>
                     <div class="field">
-                        <div class="ui radio checkbox">
-                            <input type="radio" name="extensionClass" value="AbstractCreatable" tabindex="0" class="hidden" />
-                            <label>AbstractCreatable</label>
-                        </div>
+                        <label>Model Name</label>
+                        <input type="text" th:field="*{modelName}" placeholder="Model Name (User)" />
                     </div>
                     <div class="field">
-                        <div class="ui radio checkbox">
-                            <input type="radio" name="extensionClass" value="AbstractAuditable" tabindex="0" class="hidden" />
-                            <label>AbstractAuditable</label>
-                        </div>
+                        <label>Table Name</label>
+                        <input type="text" th:field="*{tableName}" placeholder="Table Name (user)" />
                     </div>
-                </div>
-                <div class="field">
-                    <label>Model Fields
-                        <button id="addModelField" name="addModelField" type="submit" class="mini circular ui icon button" accesskey="a">
-                            <i class="add icon"></i>
-                        </button>
-                    </label>
-                    <th:block th:each="modelField, iter : *{modelFields}">
+                    <div class="inline fields">
+                        <label for="extensionClass">Extension Class:</label>
                         <div class="field">
-                            <div class="four fields">
-                                <div class="field">
-                                    <input type="text" th:field="${generatorForm.modelFields[__${iter.index}__].name}" placeholder="Name (name)" />
-                                </div>
-                                <div class="field">
-                                    <input type="text" th:field="${generatorForm.modelFields[__${iter.index}__].type}" placeholder="Type (String)" />
-                                </div>
-                                <div class="field">
-                                    <input type="text" th:field="${generatorForm.modelFields[__${iter.index}__].column}" placeholder="Column (name)" />
-                                </div>
-                                <div class="field">
-                                    <button type="submit" name="removeModelField" class="mini circular ui icon button removeModelField">
-                                        <i class="minus icon"></i>
-                                    </button>
-                                </div>
+                            <div class="ui radio checkbox">
+                                <input type="radio" name="extensionClass" checked="" value="AbstractPersistable" tabindex="0" class="hidden" />
+                                <label>AbstractPersistable</label>
                             </div>
                         </div>
-                    </th:block>
-                </div>
+                        <div class="field">
+                            <div class="ui radio checkbox">
+                                <input type="radio" name="extensionClass" value="AbstractCreatable" tabindex="0" class="hidden" />
+                                <label>AbstractCreatable</label>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="ui radio checkbox">
+                                <input type="radio" name="extensionClass" value="AbstractAuditable" tabindex="0" class="hidden" />
+                                <label>AbstractAuditable</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Model Fields
+                            <button id="addModelField" name="addModelField" type="submit" class="mini circular ui icon button" accesskey="a">
+                                <i class="add icon"></i>
+                            </button>
+                        </label>
+                        <th:block th:each="modelField, iter : *{modelFields}">
+                            <div class="field">
+                                <div class="four fields">
+                                    <div class="field">
+                                        <input type="text" th:field="${generatorForm.modelFields[__${iter.index}__].name}" placeholder="Name (name)" />
+                                    </div>
+                                    <div class="field">
+                                        <input type="text" th:field="${generatorForm.modelFields[__${iter.index}__].type}" placeholder="Type (String)" />
+                                    </div>
+                                    <div class="field">
+                                        <input type="text" th:field="${generatorForm.modelFields[__${iter.index}__].column}" placeholder="Column (name)" />
+                                    </div>
+                                    <div class="field">
+                                        <button type="submit" name="removeModelField" class="mini circular ui icon button removeModelField">
+                                            <i class="minus icon"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </th:block>
+                    </div>
 
-                <button class="ui button" type="submit">Generate</button>
+                    <button class="ui button" type="submit">Generate</button>
 
-                <input id="modelFieldToRemove" type="hidden" name="modelFieldToRemove" />
-            </form>
+                    <input id="modelFieldToRemove" type="hidden" name="modelFieldToRemove" />
+                </form>
+            </div>
         </div>
-    </div>
 </div>
-
 
 
 <!-- Jquery -->

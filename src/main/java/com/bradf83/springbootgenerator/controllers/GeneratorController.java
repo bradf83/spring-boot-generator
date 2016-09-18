@@ -50,61 +50,63 @@ public class GeneratorController {
 
                 File modelFile = new File("D:\\Examples\\First\\model\\" + capitalizedModelName + ".java");
                 created = modelFile.createNewFile();
-                try(BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(modelFile), "utf-8"))){
-                    writer.write("package " + generatorForm.getPackageName() + ".domain.models;");
-                    writer.newLine();
-                    writer.newLine();
-                    // Imports
-                    writer.write("import " + generatorForm.getPackageName() + ".domain.auditable." + generatorForm.getExtensionClass() + ";"); // TODO: Only if one is chosen
-                    writer.newLine();
-                    writer.write("import javax.persistence.*;");
-                    writer.newLine();
-                    writer.newLine();
-                    //TODO: May need additional classes
-
-                    // Comments
-
-                    // Annotations
-                    writer.write("@Table(name = \"" + generatorForm.getTableName() + "\")");
-                    writer.newLine();
-                    writer.write("@Entity");
-                    writer.newLine();
-
-                    // Class def
-                    writer.write("public class " + capitalizedModelName + " extends " + generatorForm.getExtensionClass() + " {");
-                    writer.newLine();
-                    writer.newLine();
-
-                    // Fields
-                    for (ModelField modelField : generatorForm.getModelFields()) {
-                        writer.write("\t@Column(name = \"" + modelField.getColumn() + "\")");
-                        writer.newLine();
-                        writer.write("\tprivate " + modelField.getType() + " " + modelField.getName() + ";");
+                if(created) {
+                    try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(modelFile), "utf-8"))) {
+                        writer.write("package " + generatorForm.getPackageName() + ".domain.models;");
                         writer.newLine();
                         writer.newLine();
+                        // Imports
+                        writer.write("import " + generatorForm.getPackageName() + ".domain.auditable." + generatorForm.getExtensionClass() + ";"); // TODO: Only if one is chosen
+                        writer.newLine();
+                        writer.write("import javax.persistence.*;");
+                        writer.newLine();
+                        writer.newLine();
+                        //TODO: May need additional classes
+
+                        // Comments
+
+                        // Annotations
+                        writer.write("@Table(name = \"" + generatorForm.getTableName() + "\")");
+                        writer.newLine();
+                        writer.write("@Entity");
+                        writer.newLine();
+
+                        // Class def
+                        writer.write("public class " + capitalizedModelName + " extends " + generatorForm.getExtensionClass() + " {");
+                        writer.newLine();
+                        writer.newLine();
+
+                        // Fields
+                        for (ModelField modelField : generatorForm.getModelFields()) {
+                            writer.write("\t@Column(name = \"" + modelField.getColumn() + "\")");
+                            writer.newLine();
+                            writer.write("\tprivate " + modelField.getType() + " " + modelField.getName() + ";");
+                            writer.newLine();
+                            writer.newLine();
+                        }
+
+                        // Empty Constructor
+                        writer.write("\tpublic " + capitalizedModelName + "() {}");
+                        writer.newLine();
+                        writer.newLine();
+
+                        // Getters and Setters
+                        for (ModelField modelField : generatorForm.getModelFields()) {
+                            String capitalizeName = modelField.getName().substring(0, 1).toUpperCase() + modelField.getName().substring(1);
+
+                            // Getter
+                            writer.write("\tpublic " + modelField.getType() + " get" + capitalizeName + "() { return " + modelField.getName() + "; }");
+                            writer.newLine();
+                            writer.newLine();
+
+                            // Setter
+                            writer.write("\tpublic void set" + capitalizeName + "(" + modelField.getType() + " " + modelField.getName() + ") { this." + modelField.getName() + " = " + modelField.getName() + "; }");
+                            writer.newLine();
+                            writer.newLine();
+                        }
+
+                        writer.write("}");
                     }
-
-                    // Empty Constructor
-                    writer.write("\tpublic " + capitalizedModelName + "() {}");
-                    writer.newLine();
-                    writer.newLine();
-
-                    // Getters and Setters
-                    for (ModelField modelField : generatorForm.getModelFields()) {
-                        String capitalizeName = modelField.getName().substring(0, 1).toUpperCase() + modelField.getName().substring(1);
-
-                        // Getter
-                        writer.write("\tpublic " + modelField.getType() + " get" + capitalizeName + "() { return " + modelField.getName() + "; }");
-                        writer.newLine();
-                        writer.newLine();
-
-                        // Setter
-                        writer.write("\tpublic void set" + capitalizeName + "(" + modelField.getType() + " " + modelField.getName() + ") { this." + modelField.getName() + " = " + modelField.getName() + "; }");
-                        writer.newLine();
-                        writer.newLine();
-                    }
-
-                    writer.write("}");
                 }
             }
         }
@@ -310,7 +312,7 @@ public class GeneratorController {
                     //TODO: Edit adds the model attribute with a path variable, maybe a better way to do this.
 
                     // Prepare Edit
-                    writer.write("\t@GetMapping(value = \"/{" + lowerCaseModelName +"}\")");
+                    writer.write("\t@GetMapping(value = \"/{" + lowerCaseModelName + "}\")");
                     writer.newLine();
                     writer.write("\tpublic String edit(@PathVariable " + capitalizedModelName + " " + lowerCaseModelName + ", Model model) {");
                     writer.newLine();
@@ -323,8 +325,39 @@ public class GeneratorController {
                     writer.newLine();
 
                     // Update
+                    writer.write("\t@PostMapping(value = \"/{" + lowerCaseModelName + "}\")");
+                    writer.newLine();
+                    writer.write("\tpublic String update(@Valid @ModelAttribute " + capitalizedModelName + " " + lowerCaseModelName + ", BindingResult result) {");
+                    writer.newLine();
+                    writer.write("\t\tif(!result.hasErrors()) {");
+                    writer.newLine();
+                    writer.write("\t\t\t" + lowerCaseModelName + "Service.save(" + lowerCaseModelName + ");");
+                    writer.newLine();
+                    writer.write("\t\t\t// Do some logging, messaging or auditing");
+                    writer.newLine();
+                    writer.write("\t\t\treturn \"redirect:/" + lowerCaseModelName + "\";");
+                    writer.newLine();
+                    writer.write("\t\t}");
+                    writer.newLine();
+                    writer.write("\t\treturn \"" + lowerCaseModelName + "/manage\";");
+                    writer.newLine();
+                    writer.write("\t}");
+                    writer.newLine();
+                    writer.newLine();
 
                     // Delete
+                    writer.write("\t@PostMapping(value = \"/{" + lowerCaseModelName + "}/delete\")");
+                    writer.newLine();
+                    writer.write("\tpublic String delete(@PathVariable " + capitalizedModelName + " " + lowerCaseModelName + ") {");
+                    writer.newLine();
+                    writer.write("\t\t" + lowerCaseModelName + "Service.delete(" + lowerCaseModelName + ");");
+                    writer.newLine();
+                    writer.write("\t\t// Do some logging, messaging or auditing");
+                    writer.newLine();
+                    writer.write("\t\treturn \"redirect:/" + lowerCaseModelName + "\";");
+                    writer.newLine();
+                    writer.write("\t}");
+                    writer.newLine();
 
                     writer.write("}");
                 }
@@ -332,15 +365,44 @@ public class GeneratorController {
         }
 
         // Create basic HTML pages
+        File templateDir = new File("D:\\Examples\\First\\templates");
+        created = templateDir.mkdir();
+        if(created) {
+            File modelDir = new File("D:\\Examples\\First\\templates\\" + lowerCaseModelName + "\\");
+            created = modelDir.mkdir();
+            if (created) {
+                File listFile = new File("D:\\Examples\\First\\templates\\" + lowerCaseModelName + "\\list.html");
 
-        System.out.println("Package: " + generatorForm.getPackageName());
-        System.out.println("Model: " + generatorForm.getModelName());
-        System.out.println("Table: " + generatorForm.getTableName());
-        System.out.println("Extension Class: " + generatorForm.getExtensionClass());
-        System.out.println("Fields: ");
-        for (ModelField modelField : generatorForm.getModelFields()) {
-            System.out.println(String.format("[%s][%s][%s]", modelField.getName(), modelField.getType(), modelField.getColumn()));
+                try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(listFile), "utf-8"))) {
+                    this.writeBasicThymeleafHTMLPage(writer);
+                }
+
+                File manageFile = new File("D:\\Examples\\First\\templates\\" + lowerCaseModelName + "\\manage.html");
+                try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(manageFile), "utf-8"))) {
+                    this.writeBasicThymeleafHTMLPage(writer);
+                }
+            }
+
         }
+
+        // Add generation success message
+
         return "generator/generate";
+    }
+
+    private void writeBasicThymeleafHTMLPage(BufferedWriter writer) throws IOException {
+        writer.write("<!DOCTYPE html>");
+        writer.newLine();
+        writer.newLine();
+        writer.write("<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:th=\"http://www.thymeleaf.org\">");
+        writer.newLine();
+        writer.newLine();
+        writer.write("<head><!-- Place Header Content Here --></head>");
+        writer.newLine();
+        writer.newLine();
+        writer.write("<body><!-- Place Body Content Here --></body>");
+        writer.newLine();
+        writer.newLine();
+        writer.write("</html>");
     }
 }
