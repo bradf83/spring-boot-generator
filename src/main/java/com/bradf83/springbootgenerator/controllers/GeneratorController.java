@@ -36,6 +36,9 @@ public class GeneratorController {
     @PostMapping
     public String generate(@ModelAttribute GeneratorForm generatorForm) throws IOException {
 
+        //TODO: Base directory based on a property
+        //TODO: folder name based on model+timestamp
+
         // Create Directory
         File baseDir = new File("D:\\Examples\\First");
         boolean created = baseDir.mkdir();
@@ -52,24 +55,17 @@ public class GeneratorController {
                 created = modelFile.createNewFile();
                 if(created) {
                     try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(modelFile), "utf-8"))) {
-                        writer.write("package " + generatorForm.getPackageName() + ".domain.models;");
-                        writer.newLine();
-                        writer.newLine();
+                        this.writeJavaPackage(writer, generatorForm.getPackageName() + ".domain.models;");
                         // Imports
-                        writer.write("import " + generatorForm.getPackageName() + ".domain.auditable." + generatorForm.getExtensionClass() + ";"); // TODO: Only if one is chosen
-                        writer.newLine();
-                        writer.write("import javax.persistence.*;");
-                        writer.newLine();
+                        this.writeJavaImport(writer, generatorForm.getPackageName() + ".domain.auditable." + generatorForm.getExtensionClass() + ";");
+                        this.writeJavaImport(writer, "javax.persistence.*;");
                         writer.newLine();
                         //TODO: May need additional classes
 
                         // Comments
 
                         // Annotations
-                        writer.write("@Table(name = \"" + generatorForm.getTableName() + "\")");
-                        writer.newLine();
-                        writer.write("@Entity");
-                        writer.newLine();
+                        this.writeJPAEntity(writer, generatorForm.getTableName());
 
                         // Class def
                         writer.write("public class " + capitalizedModelName + " extends " + generatorForm.getExtensionClass() + " {");
@@ -119,16 +115,11 @@ public class GeneratorController {
             created = repoFile.createNewFile();
             if(created){
                 try(BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(repoFile), "utf-8"))){
-                    writer.write("package " + generatorForm.getPackageName() + ".domain.repositories;");
-                    writer.newLine();
-                    writer.newLine();
+                    this.writeJavaPackage(writer, generatorForm.getPackageName() + ".domain.repositories;");
                     // Imports
-                    writer.write("import " + generatorForm.getPackageName() + ".domain.models." + capitalizedModelName + ";");
-                    writer.newLine();
-                    writer.write("import org.springframework.data.repository.CrudRepository;");
-                    writer.newLine();
-                    writer.write("import org.springframework.stereotype.Repository;");
-                    writer.newLine();
+                    this.writeJavaImport(writer, generatorForm.getPackageName() + ".domain.models." + capitalizedModelName + ";");
+                    this.writeJavaImport(writer, "org.springframework.data.repository.CrudRepository;");
+                    this.writeJavaImport(writer, "org.springframework.stereotype.Repository;");
                     writer.newLine();
 
                     //Comments
@@ -150,9 +141,7 @@ public class GeneratorController {
             if(created){
                 // Interface
                 try(BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(serviceFile), "utf-8"))){
-                    writer.write("package " + generatorForm.getPackageName() + ".services;");
-                    writer.newLine();
-                    writer.newLine();
+                    this.writeJavaPackage(writer, generatorForm.getPackageName() + ".services;");
 
                     //Comments
 
@@ -164,14 +153,11 @@ public class GeneratorController {
             if(created){
                 // Interface
                 try(BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(serviceFileImpl), "utf-8"))){
-                    writer.write("package " + generatorForm.getPackageName() + ".services;");
-                    writer.newLine();
-                    writer.newLine();
+                    this.writeJavaPackage(writer, generatorForm.getPackageName() + ".services;");
+
                     // Imports
-                    writer.write("import " + generatorForm.getPackageName() + ".domain.repositories." + capitalizedModelName + "Repository;");
-                    writer.newLine();
-                    writer.write("import org.springframework.stereotype.Service;");
-                    writer.newLine();
+                    this.writeJavaImport(writer, generatorForm.getPackageName() + ".domain.repositories." + capitalizedModelName + "Repository;");
+                    this.writeJavaImport(writer, "org.springframework.stereotype.Service;");
                     writer.newLine();
 
                     // Comments
@@ -212,32 +198,19 @@ public class GeneratorController {
             if (created) {
                 // Interface
                 try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(controllerFile), "utf-8"))) {
-                    writer.write("package " + generatorForm.getPackageName() + ".controllers;");
-                    writer.newLine();
-                    writer.newLine();
+                    this.writeJavaPackage(writer, generatorForm.getPackageName() + ".controllers;");
                     // Imports
-                    writer.write("import " + generatorForm.getPackageName() + ".services." + capitalizedModelName + "Service;");
-                    writer.newLine();
-                    writer.write("import org.springframework.stereotype.Controller;");
-                    writer.newLine();
-                    writer.write("import org.springframework.ui.Model;");
-                    writer.newLine();
-                    writer.write("import org.springframework.validation.BindingResult;");
-                    writer.newLine();
-                    writer.write("import org.springframework.web.bind.WebDataBinder;");
-                    writer.newLine();
-                    writer.write("import org.springframework.web.bind.annotation.InitBinder;");
-                    writer.newLine();
-                    writer.write("import org.springframework.web.bind.annotation.ModelAttribute;");
-                    writer.newLine();
-                    writer.write("import org.springframework.web.bind.annotation.RequestMapping;");
-                    writer.newLine();
-                    writer.write("import org.springframework.web.bind.annotation.GetMapping;");
-                    writer.newLine();
-                    writer.write("import org.springframework.web.bind.annotation.PostMapping;");
-                    writer.newLine();
-                    writer.write("import javax.validation.Valid;");
-                    writer.newLine();
+                    this.writeJavaImport(writer, generatorForm.getPackageName() + ".services." + capitalizedModelName + "Service;");
+                    this.writeJavaImport(writer, "org.springframework.stereotype.Controller;");
+                    this.writeJavaImport(writer, "org.springframework.ui.Model;");
+                    this.writeJavaImport(writer, "org.springframework.validation.BindingResult;");
+                    this.writeJavaImport(writer, "org.springframework.web.bind.WebDataBinder;");
+                    this.writeJavaImport(writer, "org.springframework.web.bind.annotation.InitBinder;");
+                    this.writeJavaImport(writer, "org.springframework.web.bind.annotation.ModelAttribute;");
+                    this.writeJavaImport(writer, "org.springframework.web.bind.annotation.RequestMapping;");
+                    this.writeJavaImport(writer, "org.springframework.web.bind.annotation.GetMapping;");
+                    this.writeJavaImport(writer,"org.springframework.web.bind.annotation.PostMapping;");
+                    this.writeJavaImport(writer,"javax.validation.Valid;");
                     writer.newLine();
 
                     //Comments
@@ -404,5 +377,23 @@ public class GeneratorController {
         writer.newLine();
         writer.newLine();
         writer.write("</html>");
+    }
+
+    private void writeJavaPackage(BufferedWriter writer, String packageString) throws IOException {
+        writer.write("package " + packageString);
+        writer.newLine();
+        writer.newLine();
+    }
+
+    private void writeJavaImport(BufferedWriter writer, String importString) throws IOException {
+        writer.write("import " + importString);
+        writer.newLine();
+    }
+
+    private void writeJPAEntity(BufferedWriter writer, String tableName) throws IOException {
+        writer.write("@Table(name = \"" + tableName + "\")");
+        writer.newLine();
+        writer.write("@Entity");
+        writer.newLine();
     }
 }
