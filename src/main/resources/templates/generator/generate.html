@@ -23,7 +23,10 @@
 <div class="ui grid padded">
         <div class="two column row">
             <div class="column">
-                <form class="ui form" th:action="@{/}" method="post" th:object="${generatorForm}" >
+                <div th:if="${message}" class="ui attached positive message">
+                    <p th:text="${message}"></p>
+                </div>
+                <form class="ui form attached fluid segment" th:action="@{/}" method="post" th:object="${generatorForm}" >
                     <button type="submit" tabindex="-1" style="display:none;"></button> <!-- This is a hidden button hack, to ensure that the enter triggers submit and not add model field -->
                     <div class="field">
                         <label>Package</label>

@@ -34,7 +34,7 @@ public class GeneratorController {
     }
 
     @PostMapping
-    public String generate(@ModelAttribute GeneratorForm generatorForm) throws IOException {
+    public String generate(@ModelAttribute GeneratorForm generatorForm, Model model) throws IOException {
 
         //TODO: Base directory based on a property
         //TODO: folder name based on model+timestamp
@@ -358,7 +358,7 @@ public class GeneratorController {
 
         }
 
-        // Add generation success message
+        model.addAttribute("message", "Your code was generated successfully.");
 
         return "generator/generate";
     }
